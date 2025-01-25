@@ -119,7 +119,6 @@ cloud:
     cron: '*/32 * * * *' #The syncing cron job expression, in case of auto syncing
     credentials-file: '<absolutepath\to\your\google-drive-service-account-credentials-file.json>'   #If you choose to sync by google drive, please create a google drive service account in google console, download the credentials and provide the path here
     folder-id: '<your google drive folder id>'   #The google drive folder Id where you want the backups files to be uploaded
-	
 #Lan syncig settings, this section is usefull in case you wan to save your backups files in the other computer in your local network
 #This section is also optional
 #Setup as LAN syncs jobs as you like
