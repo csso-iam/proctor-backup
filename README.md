@@ -33,7 +33,7 @@ While the source code is not publicly available, we provide releases for Windows
 ## Getting Started
 
 1. **Download Proctor**  
-   Grab the latest release for your platform from the [Releases](https://github.com/tsognong/proctor-backup/releases/latest).
+   Grab the latest release for your platform from the [Releases](https://github.com/csso-iam/proctor-backup/releases/tag/Latest).
 
 2. **Configure Your Backup Jobs**  
    Edit the provided YAML configuration file to match your setup. Refer to the [sample configuration file](#) for details.
