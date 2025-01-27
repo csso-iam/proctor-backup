@@ -1,6 +1,6 @@
 # Proctor Backup
 
-**Proctor** is a free, modern database backup software with a sleek web UI for managing and monitoring your backup processes.
+**Proctor Backup** is a free, modern database backup software with a sleek web UI for managing and monitoring your backup processes.
 While the source code is not publicly available, we provide releases for Windows and Linux platforms.
 
 ---
