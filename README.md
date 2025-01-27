@@ -53,9 +53,9 @@ For example, here’s a basic snippet:
 # configuration
 version: 1
 description: Backup scheduler configuration
-# Number of days of local backup files retention
-retention: 0
-#The rotation cron, that means at whihc frequency the old backup will be removed
+# Number of days of old local backup files retention
+retention: 5
+#The rotation cron, that means at which frequency the old backup files will be removed
 rotation-cron: '1 13 * * *' # 13H01 minutes every day
 #The path to your mysqldump.exe file
 mysqldump-dir: 'absolutepath/to/mysqldump.exe'
@@ -65,7 +65,7 @@ backup-dir: 'path/to/backups/folder'
 #ui-port: 443    #in case of https
 #ui-port: 80    #in case of http
 ui-port: 3000    #Use any free port you like
-#https-config:   #activate this section if you want to use use access the web interface using https intead of http by default
+#https-config:   #activate this section if you want to access the web interface using https intead of http by default
 #  certificate: 'path/to/certicate.crt file'
 #  key: 'path/to/private key.key file'
 #The credentials that you will use to authenticate to the web interface
@@ -83,18 +83,18 @@ datasource:
   # url: 'root@tcp(127.0.0.1:3306)/books?parseTime=true'
     
   # username of the mysql server to connect to
-  username: root
+  username: your_mysql_backup_user_name
   # password of the mysql server to connect to
-  password: 'root'
+  password: ${YOUR_MYSQL_BACKUP_USER_PASSWORD}   #Create environment variable for you backup user password to avoid security flows 
   
-#The email settings that will be used for notifications (or email backup syncing, see the cloud config section)
-#Remove the emqil settings if not needed
+#The email settings that will be used for notifications (or backup sync by email, see Cloud Config section)
+#Remove the email settings if not needed
 email:
-  hostname: smtp.gmail.com  #smtp.mail.yahoo.com
-  port: 587
+  hostname: smtp.gmail.com  #or smtp.mail.yahoo.com #provide the smtp server hostname
+  port: 587    #smtp server port
   username: <your smtp email@email>
   to: <mailTo@>
-  password: <your smtp password>
+  password: ${YOUR_SMTP_PASSWORD}   #If possible, create an environment variable
   
 #Backups jobs settings, you can add as jobs as you need, actually there is only one database per job, option for all databases at once will come later
 jobs:
@@ -102,7 +102,7 @@ jobs:
     cron: '*/10 * * * *'     #The job cron expression
     # The database name
     dbname: firstdatabase
-    # The backup files will be placed to <backup-dir>/<dbname> in the format {DATABASE_NAME}_{TIMESTAMP}.sql.zip or gz
+    # The backup files will be placed to <backup-dir>/<dbname> in the format <database>_yyyy-mm-ddTHH-MM-SS.sql.zip or gz
 # - name: hourly_backup
     #The cron expression of the backup job
 #   cron: '*/30 * * * * *'
@@ -126,8 +126,8 @@ cloud:
 lan:
   - computer-name: '<WINDOWS-COMPUTER-NAME>'  #The computer name to whihc you want to sync
     port: 5985     #The winrm port number, actually only 5985 is suppported
-    credential: '<WINDOWS-COMPUTER-NAME>\<target-user>'   #Your user name to connect to the target host, please preferably setup a particular backup user in the target host; assgning him, add the user to the Remote group
-    secret: '<password>'   #The remote user password
+    credential: '<WINDOWS-COMPUTER-NAME>\<target-user>'   #Your user name to connect to the target host, please preferably setup a particular backup user in the target host; add the user to the Windows Remote group
+    secret: ${REMOTE_USER_PASSWORD}   #The remote user password, please use the environment variable if possible
     destination: 'path\to\remote-machine\backup_folder'  #The folder of the remote machine where the backup will be saved
     cron: '*/15 * * * *'             #The syncing cron job expression
     retention: 1        #The remote backups retention in days
