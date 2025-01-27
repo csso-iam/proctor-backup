@@ -49,89 +49,97 @@ Proctor uses a **YAML configuration file** to define your backup settings, synch
 For example, here’s a basic snippet:
 
 ```yaml
-# Proctor database backup 
-# configuration
+# Proctor database backup configuration
 version: 1
 description: Backup scheduler configuration
-# Number of days of old local backup files retention
+
+# Number of days to retain old local backup files
 retention: 5
-#The rotation cron, that means at which frequency the old backup files will be removed
-rotation-cron: '1 13 * * *' # 13H01 minutes every day
-#The path to your mysqldump.exe file
+
+# Cron schedule for backup file rotation (old backups will be removed based on this schedule)
+rotation-cron: '1 13 * * *' # Runs at 13:01 every day
+
+# Path to your mysqldump executable file
 mysqldump-dir: 'absolutepath/to/mysqldump.exe'
-#The path to the folder where your local backups files will be kept
+
+# Directory where local backup files will be stored
 backup-dir: 'path/to/backups/folder'
-#The http ui port, where you will monitor your jobs
-#ui-port: 443    #in case of https
-#ui-port: 80    #in case of http
-ui-port: 3000    #Use any free port you like
-#https-config:   #activate this section if you want to access the web interface using https intead of http by default
-#  certificate: 'path/to/certicate.crt file'
-#  key: 'path/to/private key.key file'
-#The credentials that you will use to authenticate to the web interface
+
+# UI settings for monitoring backup jobs
+# Port for accessing the backup UI (use a free port)
+# ui-port: 443    # Uncomment this for HTTPS
+# ui-port: 80     # Uncomment this for HTTP
+ui-port: 3000      # Set to a free port for web access
+
+# HTTPS configuration for secure access to the UI (if desired)
+# Uncomment and provide certificate and key files for HTTPS
+# https-config:
+#   certificate: 'path/to/certificate.crt'
+#   key: 'path/to/private-key.key'
+
+# Web UI credentials for authentication
 ui-user:
   name: admin@admin.com
-  password: proctor.2.0.2.5     #set a password to access the web interface, no config and no secret information is performed via the ui, so this is a sharable credential
-datasource:
-  # Hostname of the mysql server to connect to, as you like
-  hostname: 127.0.0.1
-  
-  # Port of the mysql server to connect to
-  port: 3306
-  
-  # The database url, activate this in case you have a custom url
-  # url: 'root@tcp(127.0.0.1:3306)/books?parseTime=true'
-    
-  # username of the mysql server to connect to
-  username: your_mysql_backup_user_name
-  # password of the mysql server to connect to
-  password: ${YOUR_MYSQL_BACKUP_USER_PASSWORD}   #Create environment variable for you backup user password to avoid security flows 
-  
-#The email settings that will be used for notifications (or backup sync by email, see Cloud Config section)
-#Remove the email settings if not needed
-email:
-  hostname: smtp.gmail.com  #or smtp.mail.yahoo.com #provide the smtp server hostname
-  port: 587    #smtp server port
-  username: <your smtp email@email>
-  to: <mailTo@>
-  password: ${YOUR_SMTP_PASSWORD}   #If possible, create an environment variable
-  
-#Backups jobs settings, you can add as jobs as you need, actually there is only one database per job, option for all databases at once will come later
-jobs:
-  - name: everyTheninutes    #The unique job name
-    cron: '*/10 * * * *'     #The job cron expression
-    # The database name
-    dbname: firstdatabase
-    # The backup files will be placed to <backup-dir>/<dbname> in the format <database>_yyyy-mm-ddTHH-MM-SS.sql.zip or gz
-# - name: hourly_backup
-    #The cron expression of the backup job
-#   cron: '*/30 * * * * *'
-#   dbname: other database
+  password: proctor.2.0.2.5  # Shared, non-sensitive password (UI doesn't handle secret info)
 
-#Cloud syncing jobs settings, actually you can sync your databases dumps in google drive or by email
-#Add as jobs as you need, the cloud syncing is not mandatory, remove this section if you need
+# Database connection details
+datasource:
+  # Hostname of the MySQL server
+  hostname: 127.0.0.1
+
+  # Port of the MySQL server
+  port: 3306
+
+  # Uncomment and set if using a custom database URL
+  # url: 'root@tcp(127.0.0.1:3306)/books?parseTime=true'
+
+  # MySQL username for backup user
+  username: your_mysql_backup_user_name
+
+  # MySQL password (use an environment variable for better security)
+  password: ${YOUR_MYSQL_BACKUP_USER_PASSWORD}  # Set as an environment variable to avoid exposing credentials
+
+# Email settings for backup notifications or syncing backups via email
+email:
+  hostname: smtp.gmail.com  # SMTP server hostname (e.g., Gmail or Yahoo)
+  port: 587               # SMTP server port
+  username: <your smtp email@email>
+  to: <mailTo@>            # Email address to send notifications to
+  password: ${YOUR_SMTP_PASSWORD}  # Set SMTP password as an environment variable for security
+
+# Backup job settings (you can define multiple jobs)
+jobs:
+  - name: everyTenMinutes    # Unique job name
+    cron: '*/10 * * * *'     # Cron expression for backup frequency
+    dbname: firstdatabase    # Name of the database to backup
+
+  # Example of another job (commented out for now)
+  # - name: hourly_backup
+  #   cron: '*/30 * * * * *'
+  #   dbname: other_database
+
+# Cloud syncing job settings (optional)
+# Sync backups to Google Drive or via email
 cloud:
-  - method: email #The backups syncing method (actually only email and google_drive are possible)
-    auto: true    #The auto mode is used if you mean the syncing job to be automatic (true) or manual (false), for manuall syncing you will use the web interface to sync manually
-    cron: '*/32 * * * *'    #The syncing cron job expression, in case of auto syncing
-  - method: google_drive
+  - method: email           # Method for cloud syncing (email or google_drive)
+    auto: true               # Set to true for automatic syncing
+    cron: '*/32 * * * *'     # Sync cron schedule
+  - method: google_drive     # Another method: Google Drive
     auto: true
-    cron: '*/32 * * * *' #The syncing cron job expression, in case of auto syncing
-    credentials-file: '<absolutepath\to\your\google-drive-service-account-credentials-file.json>'   #If you choose to sync by google drive, please create a google drive service account in google console, download the credentials and provide the path here
-    folder-id: '<your google drive folder id>'   #The google drive folder Id where you want the backups files to be uploaded
-#Lan syncig settings, this section is usefull in case you wan to save your backups files in the other computer in your local network
-#This section is also optional
-#Setup as LAN syncs jobs as you like
-#Actually only WINRM settings are accepted
+    cron: '*/32 * * * *'     # Sync cron schedule for Google Drive
+    credentials-file: '<absolutepath\to\your\google-drive-service-account-credentials-file.json>'  # Path to Google Drive credentials
+    folder-id: '<your google drive folder id>'   # Google Drive folder ID for backups
+
+# LAN syncing settings (optional, for syncing backups to a local network computer)
 lan:
-  - computer-name: '<WINDOWS-COMPUTER-NAME>'  #The computer name to whihc you want to sync
-    port: 5985     #The winrm port number, actually only 5985 is suppported
-    credential: '<WINDOWS-COMPUTER-NAME>\<target-user>'   #Your user name to connect to the target host, please preferably setup a particular backup user in the target host; add the user to the Windows Remote group
-    secret: ${REMOTE_USER_PASSWORD}   #The remote user password, please use the environment variable if possible
-    destination: 'path\to\remote-machine\backup_folder'  #The folder of the remote machine where the backup will be saved
-    cron: '*/15 * * * *'             #The syncing cron job expression
-    retention: 1        #The remote backups retention in days
-    rotation-cron: '*/30 * * * *'     #The remote backups rotation cron expression, you will not need to delete old bqckup backups files in remote machine manually
+  - computer-name: '<WINDOWS-COMPUTER-NAME>'  # Name of the Windows computer to sync to
+    port: 5985                                  # The WinRM port (only 5985 supported)
+    credential: '<WINDOWS-COMPUTER-NAME>\<target-user>'  # Username for remote connection
+    secret: ${REMOTE_USER_PASSWORD}  # Remote user password (use environment variable for security)
+    destination: 'path\to\remote-machine\backup_folder'  # Remote folder path for backup
+    cron: '*/15 * * * *'     # Cron schedule for LAN syncing
+    retention: 1             # Retention period for remote backups (in days)
+    rotation-cron: '*/30 * * * *'  # Cron schedule for remote backup file rotation (old files deleted automatically)
 
 ```
 
