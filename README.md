@@ -171,6 +171,18 @@ Proctor is distributed as-is for free use. Contact the author for inquiries abou
 ## Download
 Head to the Releases section to download the latest version of Proctor for your platform.
 
+![backup](https://github.com/user-attachments/assets/cca797e1-350c-4686-a282-04e1e9a344ef)
+
+![capture](https://github.com/user-attachments/assets/d4899b31-f2b1-47f5-bea1-0d7c2587323a)
+
+![logger](https://github.com/user-attachments/assets/c0ec5090-9d03-43c6-8de8-ffd3f9a475c3)
+
+![mertcis](https://github.com/user-attachments/assets/9bf0a94b-3f64-460f-965e-c99abb5515a4)
+
+
+
+
+
 
 
 
